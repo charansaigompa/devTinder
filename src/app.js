@@ -1,16 +1,21 @@
-const express=require("express")
-const app=express()
- app.get("/user",(req,res)=>{
-    console.log(req.query)
-    res.send({firstname:"ramu",secondname:"krishna"})
-})
- app.get("/user2/:id/:password",(req,res)=>{
-    console.log(req.params)
-    res.send({firstname:"ramu",secondname:"krishna"})
-})
+const express = require("express");
+const app = express();
+app.use(
+  "/user",
+  (req, res,next) => {
+    next()
+    
+  },
+  (req, res,next) => {
+    next()
+   
+  },
+    (req, res) => {
+    res.send("3rd route handler");
+  },
+ 
+);
 
-
-app.listen(7777,()=>{
-    console.log("server is running on port 7777")
-})
-  
+app.listen(7777, () => {
+  console.log("server is running on port 7777");
+});
