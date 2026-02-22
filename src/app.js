@@ -8,11 +8,17 @@ app.post("/signup",async(req,res)=>{
     lastName:"Krishna",
     emailId:"ramkrishna@email.com",
     password:"ram123*",
-    age:"23",
+    age:21,
     gender:"male",
    })
-   await user.save()
+   try{
+         await user.save()
    res.send("User Added Successfully")
+   }
+   catch(err){
+   res.send("Error saving the user"+err.message)
+   }
+
 })
 
 
