@@ -14,6 +14,7 @@ app.post("/signup",async(req,res)=>{
    }
 
 })
+//get api
 app.get("/user",async(req,res)=>{
   
   try{
@@ -38,6 +39,30 @@ app.get("/feed",async(req,res)=>{
   }
   catch(err){
      res.status(400).send("something went wrong")
+  }
+})
+//delete api
+app.delete("/user",async(req,res)=>{
+  try{
+    const userId=req.body.userId
+    await User.findByIdAndDelete(userId)
+    res.send("deleted the user")
+  }
+  catch(err){
+    res.send("something went wrong")
+  }
+})
+// updating the user
+app.patch("/user",async(req,res)=>{
+  try{
+    const userId=req.body.userId
+    console.log(userId)
+    const data=req.body
+    await User.findByIdAndUpdate(userId,data)
+    res.send("data updated")
+  }
+  catch(err){
+    res.send("something went wrong")
   }
 })
 
