@@ -1,22 +1,29 @@
 const express = require("express");
 const app = express();
-//Handling Auth middleware  for all GET POST,.. request
-const {adminAuth,userAuth}=require("./middleware/auth");
-app.use("/admin",adminAuth)
-app.get("/admin/getDetails",(req,res)=>{
-    res.send("All details are sent")
-})
-app.get("/admin/deleteUser",(req,res)=>{
-    res.send("User details are deleted")
-})
-app.post("/user/login",(req,res)=>{
-    res.send("you are logining in ")
-})
-app.get("/user/details",userAuth,(req,res)=>{
-    res.send("you are seeing user details")
+const connectDB=require("./config/database")
+const User=require("./models/user")
+app.post("/signup",async(req,res)=>{
+   const user=new User({
+    firstName:"Rama",
+    lastName:"Krishna",
+    emailId:"ramkrishna@email.com",
+    password:"ram123*",
+    age:"23",
+    gender:"male",
+   })
+   await user.save()
+   res.send("User Added Successfully")
 })
 
 
-app.listen(7777, () => {
+
+connectDB()
+.then(()=>{
+    console.log("Database connection done ")
+    app.listen(7777, () => {
   console.log("server is running on port 7777");
 });
+})
+.catch((err)=>{
+    console.log("Database cannot be connected")
+})
