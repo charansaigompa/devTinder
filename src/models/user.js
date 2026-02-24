@@ -1,4 +1,5 @@
 const mongoose=require("mongoose");
+const validator=require("validator")
 const userSchema=new mongoose.Schema({
     firstName:{
         type:String,
@@ -21,11 +22,21 @@ const userSchema=new mongoose.Schema({
          trim:true,
          minLength:4,
         maxLength:50,
+        validate(value){
+          if(!validator.isEmail(value)){
+            throw new Error("Invalid email address"+value)
+          }
+        }
     },
     password:{
         type:String,
         required:true,
         minLength:4,
+        validate(value){
+          if(!validator.isStrongPassword(value)){
+            throw new Error("Invalid Password "+value)
+          }
+   }
        
     },
     age:{
@@ -50,9 +61,13 @@ const userSchema=new mongoose.Schema({
    },
    photoUrl:{
     type:String,
-    default:"https://tse1.mm.bing.net/th/id/OIP.mP1RB8xuQaHAvUkonYY6HwHaHK?pid=Api&P=0&h=180"
+    default:"https://tse1.mm.bing.net/th/id/OIP.mP1RB8xuQaHAvUkonYY6HwHaHK?pid=Api&P=0&h=180",
+    validate(value){
+          if(!validator.isURL(value)){
+            throw new Error("Invalid url "+value)
+          }
    }
-},{
+}},{
     timestamps:true,
 });
 module.exports =mongoose.model("User",userSchema)
