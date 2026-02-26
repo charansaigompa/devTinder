@@ -4,8 +4,11 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken")
 
 app.use(express.json());
+app.use(cookieParser())
 app.post("/signup", async (req, res) => {
   try {
     const {firstName,lastName,emailId,password}=req.body;    
@@ -33,8 +36,12 @@ app.post("/login",async(req,res)=>{
     if(!user){
       throw new Error("Invalid credentials");
     }
-    const isPasswordVaild=await bcrypt.compare(password,user.password);
+    const isPasswordVaild=await bcrypt.compare(password,user.password);//returns boolean
     if(isPasswordVaild){
+      //creating jwt token
+      const {_id}=user;
+      const token=jwt.sign({_id},"Devtinder@123")
+      res.cookie("token",token)
       res.send("Login successful")
     }
     else{
@@ -44,6 +51,16 @@ app.post("/login",async(req,res)=>{
   catch(err){
     res.send(err.message)
   }
+})
+app.get("/profile",async(req,res)=>{
+  const cookies=req.cookies;
+  //verifying the cookie
+  const{token}=req.cookies
+  const decoded=jwt.verify(token,"Devtinder@123")
+  const{_id}=decoded
+  const user=await User.findById(_id);
+  res.send(user)
+
 })
 //get api
 app.get("/user", async (req, res) => {
