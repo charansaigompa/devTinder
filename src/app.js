@@ -41,8 +41,9 @@ app.post("/login",async(req,res)=>{
     if(isPasswordVaild){
       //creating jwt token
       const {_id}=user;
-      const token=jwt.sign({_id},"Devtinder@123")
-      res.cookie("token",token)
+      const token=jwt.sign({_id},"Devtinder@123",{expiresIn:"1h"})
+      res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)
+      })
       res.send("Login successful")
     }
     else{
@@ -62,6 +63,10 @@ app.get("/profile",userAuth,async(req,res)=>{
   }
   
 
+})
+app.post("/sendConnectionReq",userAuth,(req,res)=>{
+  const user=req.user
+  res.send(user.firstName+" connection send")
 })
 //get api
 app.get("/user", async (req, res) => {
