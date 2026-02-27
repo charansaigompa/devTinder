@@ -42,8 +42,7 @@ app.post("/login",async(req,res)=>{
       //creating jwt token
     
       const token= await user.getJWT()  //Here who ever the current user it will generate token for that user by userShema
-      res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)
-      })
+      res.cookie("token",token)
       res.send("Login successful")
     }
     else{
