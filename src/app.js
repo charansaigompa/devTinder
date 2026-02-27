@@ -37,11 +37,11 @@ app.post("/login",async(req,res)=>{
     if(!user){
       throw new Error("Invalid credentials");
     }
-    const isPasswordVaild=await bcrypt.compare(password,user.password);//returns boolean
+    const isPasswordVaild=await user.validatePassword(password)//returns boolean
     if(isPasswordVaild){
       //creating jwt token
-      const {_id}=user;
-      const token=jwt.sign({_id},"Devtinder@123",{expiresIn:"1h"})
+    
+      const token= await user.getJWT()  //Here who ever the current user it will generate token for that user by userShema
       res.cookie("token",token,{expires:new Date(Date.now()+8*3600000)
       })
       res.send("Login successful")
@@ -68,65 +68,7 @@ app.post("/sendConnectionReq",userAuth,(req,res)=>{
   const user=req.user
   res.send(user.firstName+" connection send")
 })
-//get api
-app.get("/user", async (req, res) => {
-  try {
-    const user = await User.find({ emailId: req.body.emailId });
-    if (user.length === 0) {
-      res.status(404).send("User not found");
-    } else {
-      res.send(user);
-    }
-  } catch (err) {
-    res.status(400).send("something went wrong");
-  }
-});
-app.get("/feed", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    res.status(400).send("something went wrong");
-  }
-});
-//delete api
-app.delete("/user", async (req, res) => {
-  try {
-    const userId = req.body.userId;
-    await User.findByIdAndDelete(userId);
-    res.send("deleted the user");
-  } catch (err) {
-    res.send("something went wrong");
-  }
-});
-// updating the user
-app.patch("/user/:userId", async (req, res) => {
-  try {
-    const userId = req.params?.userId;
-    const data = req.body;
-    const ALLOWED_UPDATES = [
-      "userId",
-      "photoUrl",
-      "about",
-      "gender",
-      "age",
-      "skills",
-    ];
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k),
-    );
-    if (!isUpdateAllowed) {
-      throw new Error("Update not allowed");
-    }
-    if (data?.skills.length > 10) {
-      throw new Error("Skills cannot be more than 10");
-    }
-    await User.findByIdAndUpdate(userId, data, { runValidators: true });
-    res.send("data updated");
-  } catch (err) {
-    res.send("something went wrong " + err.message);
-  }
-});
+
 
 connectDB()
   .then(() => {
