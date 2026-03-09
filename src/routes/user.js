@@ -68,8 +68,8 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $nin: Array.from(hideUserFromFeed) } },
         { _id: { $ne: loggedInUser._id } },
       ],
-    }).select(USER_SAFE_DATA);
-    res.send(users).skip(skip).limit(limit);
+    }).select(USER_SAFE_DATA).skip(skip).limit(limit);
+    res.json({data:users})
   } catch (err) {
     res.status(400).send("ERROR: " + err.message);
   }
