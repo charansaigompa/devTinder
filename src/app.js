@@ -12,6 +12,10 @@ const profileRouter=require("./routes/profile")
 const requestRouter=require("./routes/request")
 const userRouter=require("./routes/user")
 const cors=require("cors")
+const http=require("http")
+const initializesocket=require("./utils/socket")
+
+require("dotenv").config()
 
 app.use(cors({
   origin:"http://localhost:5173",
@@ -24,11 +28,14 @@ app.use("/",profileRouter)
 app.use("/",requestRouter)
 app.use("/",userRouter)
 
+const server=http.createServer(app)
+initializesocket(server)
+
 
 connectDB()
   .then(() => {
     console.log("Database connection done ");
-    app.listen(7777, () => {
+    server.listen(process.env.PORT, () => {
       console.log("server is running on port 7777");
     });
   })
